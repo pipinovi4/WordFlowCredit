@@ -1,9 +1,9 @@
 from __future__ import annotations
 import logging
 import os
+
 from dataclasses import dataclass
 from typing import List, Optional, Set
-
 from dotenv import load_dotenv
 from telegram import (
     Update, InputMediaPhoto,
@@ -26,7 +26,7 @@ logging.basicConfig(
 log = logging.getLogger("worldflow")
 
 # ===== Locales =====
-from locales import t  # i18n
+from locales import translate, COMMON_TEXT  # i18n
 
 # ===== Callback data keys =====
 CB_START = "start_flow"
@@ -59,52 +59,9 @@ def load_settings() -> Settings:
     )
 
 # ===== Regions & Countries =====
-REGIONS = {
-    "CIS": {"title": "🌐 СНГ / CIS", "code": "CIS"},
-    "EU":  {"title": "🇪🇺 Europe",   "code": "EU"},
-    "NA":  {"title": "🗽 North America", "code": "NA"},
-    "AS":  {"title": "🏯 Asia", "code": "AS"},
-}
 
-COUNTRIES_BY_REGION = {
-    "CIS": [
-        {"flag": "🇷🇺", "title": "Россия",    "code": "RU", "lang": "ru"},
-        {"flag": "🇧🇾", "title": "Беларусь",  "code": "BY", "lang": "be"},
-        {"flag": "🇰🇿", "title": "Қазақстан", "code": "KZ", "lang": "kk"},
-    ],
-    "EU": [
-        {"flag": "🇩🇪", "title": "Deutschland", "code": "DE", "lang": "de"},
-        {"flag": "🇫🇷", "title": "France",      "code": "FR", "lang": "fr"},
-        {"flag": "🇬🇷", "title": "Ελλάδα",      "code": "GR", "lang": "el"},
-        {"flag": "🇬🇧", "title": "United Kingdom", "code": "GB", "lang": "en"},
-    ],
-    "NA": [
-        {"flag": "🇺🇸", "title": "United States", "code": "US", "lang": "en"},
-        {"flag": "🇨🇦", "title": "Canada",        "code": "CA", "lang": "en"},
-    ],
-    "AS": [
-        {"flag": "🇮🇳", "title": "भारत (India)", "code": "IN", "lang": "hi"},
-        {"flag": "🇦🇪", "title": "الإمارات (UAE)", "code": "AE", "lang": "ar"},
-    ],
-}
-
-LANG_BY_COUNTRY = {c["code"]: c["lang"] for region in COUNTRIES_BY_REGION.values() for c in region}
-COUNTRY_TITLE   = {c["code"]: f'{c["flag"]} {c["title"]}' for region in COUNTRIES_BY_REGION.values() for c in region}
-
-# ===== Static UI =====
-WELCOME_BILINGUAL = (
-    "*Let’s get you started*\n\n"
-    "▶ To continue, select your country and start the application.\n\n"
-    "🌍 Indicate the country for your application.\n"
-    "📄 The form and language will adjust automatically.\n"
-    
-    "\n— — — — — — — — — —\n\n"
-    
-    "*Начнём оформление*\n\n"
-    "▶ Чтобы продолжить, выберите страну и начните оформление.\n\n"
-    "🌍 Укажите страну для подачи заявки.\n"
-    "📄 Анкета и язык настроятся автоматически."
-)
+LANG_BY_COUNTRY = {c["code"]: c["lang"] for region in COMMON_TEXT.COUNTRIES_BY_REGION.values() for c in region}
+COUNTRY_TITLE   = {c["code"]: f'{c["flag"]} {c["title"]}' for region in COMMON_TEXT.COUNTRIES_BY_REGION.values() for c in region}
 
 # ===== Keyboards =====
 def kb_start() -> InlineKeyboardMarkup:
@@ -117,27 +74,27 @@ def cb_menu(action: str) -> str:  return f"{CB_MENU}{action}"
 def kb_regions() -> InlineKeyboardMarkup:
     rows: List[List[InlineKeyboardButton]] = []
     for code in ("CIS", "EU", "NA", "AS"):
-        rows.append([InlineKeyboardButton(REGIONS[code]["title"], callback_data=cb_region(code))])
+        rows.append([InlineKeyboardButton(COMMON_TEXT.REGIONS[code]["title"], callback_data=cb_region(code))])
     return InlineKeyboardMarkup(rows)
 
 def kb_countries(region_code: str) -> InlineKeyboardMarkup:
     rows: List[List[InlineKeyboardButton]] = []
-    for c in COUNTRIES_BY_REGION[region_code]:
+    for c in COMMON_TEXT.COUNTRIES_BY_REGION[region_code]:
         rows.append([InlineKeyboardButton(f'{c["flag"]} {c["title"]}', callback_data=cb_country(c["code"]))])
     rows.append([InlineKeyboardButton("↩️ Back / Назад", callback_data=CB_START)])
     return InlineKeyboardMarkup(rows)
 
 def kb_main_menu(lang: str) -> InlineKeyboardMarkup:
-    row_apply = [InlineKeyboardButton(t(lang, "btn_apply"), callback_data=cb_menu(BTN_APPLY))]
+    row_apply = [InlineKeyboardButton(translate(lang, "btn_apply"), callback_data=cb_menu(BTN_APPLY))]
     rows = [
         row_apply,
         [
-            InlineKeyboardButton(t(lang, "btn_support"), callback_data=cb_menu(BTN_SUPPORT)),
-            InlineKeyboardButton(t(lang, "btn_about"),   callback_data=cb_menu(BTN_ABOUT)),
+            InlineKeyboardButton(translate(lang, "btn_support"), callback_data=cb_menu(BTN_SUPPORT)),
+            InlineKeyboardButton(translate(lang, "btn_about"),   callback_data=cb_menu(BTN_ABOUT)),
         ],
         [
-            InlineKeyboardButton(t(lang, "btn_change_country"), callback_data=cb_menu(BTN_CHANGE_COUNTRY)),
-            InlineKeyboardButton(t(lang, "btn_my_apps"),        callback_data=cb_menu(BTN_MY_APPS)),
+            InlineKeyboardButton(translate(lang, "btn_change_country"), callback_data=cb_menu(BTN_CHANGE_COUNTRY)),
+            InlineKeyboardButton(translate(lang, "btn_my_apps"),        callback_data=cb_menu(BTN_MY_APPS)),
         ],
     ]
     return InlineKeyboardMarkup(rows)
@@ -151,10 +108,10 @@ def kb_about(lang: str) -> InlineKeyboardMarkup:
     YT       = os.getenv("SOCIAL_YT",       "https://youtube.com/@worldflowcredit")
 
     rows = [
-        [InlineKeyboardButton(t(lang, "btn_website"), url=WEBSITE), InlineKeyboardButton(t(lang, "btn_tg_channel"), url=TG_CH)],
-        [InlineKeyboardButton(t(lang, "btn_instagram"), url=INSTA), InlineKeyboardButton(t(lang, "btn_x"), url=X_TW)],
-        [InlineKeyboardButton(t(lang, "btn_linkedin"), url=LINKEDIN), InlineKeyboardButton(t(lang, "btn_youtube"), url=YT)],
-        [InlineKeyboardButton(t(lang, "btn_back"), callback_data=cb_menu(BTN_BACK))],
+        [InlineKeyboardButton(translate(lang, "btn_website"), url=WEBSITE), InlineKeyboardButton(t(lang, "btn_tg_channel"), url=TG_CH)],
+        [InlineKeyboardButton(translate(lang, "btn_instagram"), url=INSTA), InlineKeyboardButton(t(lang, "btn_x"), url=X_TW)],
+        [InlineKeyboardButton(translate(lang, "btn_linkedin"), url=LINKEDIN), InlineKeyboardButton(t(lang, "btn_youtube"), url=YT)],
+        [InlineKeyboardButton(translate(lang, "btn_back"), callback_data=cb_menu(BTN_BACK))],
     ]
     return InlineKeyboardMarkup(rows)
 
@@ -367,10 +324,10 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     context.user_data.clear()
     if update.message:
-        await update.message.reply_text(WELCOME_BILINGUAL, parse_mode="Markdown", reply_markup=kb_start())
+        await update.message.reply_text(COMMON_TEXT.WELCOME_BILINGUAL, parse_mode="Markdown", reply_markup=kb_start())
     else:
         # could be triggered by callback from a media message, so use safe_edit
-        await safe_edit(update.callback_query, WELCOME_BILINGUAL, reply_markup=kb_start(), parse_mode="Markdown")
+        await safe_edit(update.callback_query, COMMON_TEXT.WELCOME_BILINGUAL, reply_markup=kb_start(), parse_mode="Markdown")
 
 async def on_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     q = update.callback_query
@@ -381,12 +338,12 @@ async def on_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     if data == CB_START:
         # starting over → cleanup panels too
         await _wipe_all_progress_panels(q.message.chat, context)
-        await safe_edit(q, WELCOME_BILINGUAL, reply_markup=kb_regions(), parse_mode="Markdown")
+        await safe_edit(q, COMMON_TEXT.WELCOME_BILINGUAL, reply_markup=kb_regions(), parse_mode="Markdown")
         return
 
     if data.startswith(CB_REGION):
         region_code = data.split(":", 1)[1]
-        await safe_edit(q, WELCOME_BILINGUAL, reply_markup=kb_countries(region_code), parse_mode="Markdown")
+        await safe_edit(q, COMMON_TEXT.WELCOME_BILINGUAL, reply_markup=kb_countries(region_code), parse_mode="Markdown")
         return
 
     if data.startswith(CB_COUNTRY):
@@ -430,7 +387,7 @@ async def on_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
             if file_id:
                 try:
                     await q.edit_message_media(
-                        media=InputMediaPhoto(media=file_id, caption=t(lang, "about_full"), parse_mode="HTML"),
+                        media=InputMediaPhoto(media=file_id, caption=translate(lang, "about_full"), parse_mode="HTML"),
                         reply_markup=kb_about(lang),
                     )
                     return
@@ -438,19 +395,19 @@ async def on_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
                     log.warning("edit_message_media failed: %s", e)
 
             # Fallback to text (use safe_edit in case previous is media)
-            await safe_edit(q, t(lang, "about_full"), reply_markup=kb_about(lang), parse_mode="Markdown")
+            await safe_edit(q, translate(lang, "about_full"), reply_markup=kb_about(lang), parse_mode="Markdown")
             return
 
         if action == BTN_CHANGE_COUNTRY:
-            await safe_edit(q, t(lang, "back_to_region"), reply_markup=kb_regions())
+            await safe_edit(q, translate(lang, "back_to_region"), reply_markup=kb_regions())
             return
 
         if action == BTN_MY_APPS:
-            await safe_edit(q, t(lang, "my_apps_stub") + "\n\n" + t(lang, "menu_title"), reply_markup=kb_main_menu(lang))
+            await safe_edit(q, translate(lang, "my_apps_stub") + "\n\n" + t(lang, "menu_title"), reply_markup=kb_main_menu(lang))
             return
 
         if action == BTN_BACK:
-            await replace_with_text(q, t(lang, "menu_title"), reply_markup=kb_main_menu(lang))
+            await replace_with_text(q, translate(lang, "menu_title"), reply_markup=kb_main_menu(lang))
             return
 
 async def handle_application_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -519,8 +476,8 @@ async def handle_application_message(update: Update, context: ContextTypes.DEFAU
         # finish: remove the panel and reset
         await _wipe_all_progress_panels(msg.chat, context)
         context.user_data[APP_FLOW] = False
-        await msg.chat.send_message(t(lang, "ui.completed_demo"), reply_markup=ReplyKeyboardRemove())
-        await msg.chat.send_message(t(lang, "menu_title"), reply_markup=kb_main_menu(lang))
+        await msg.chat.send_message(translate(lang, "ui.completed_demo"), reply_markup=ReplyKeyboardRemove())
+        await msg.chat.send_message(translate(lang, "menu_title"), reply_markup=kb_main_menu(lang))
         return
 
     sent_prompt = await send_step_prompt(msg, lang, country, steps[idx])
