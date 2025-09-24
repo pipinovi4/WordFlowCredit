@@ -128,3 +128,9 @@ cache/
 .prof
 .profraw
 trace.out
+
+# =========================
+# Development files
+# =========================
+
+.project-structure.txt
