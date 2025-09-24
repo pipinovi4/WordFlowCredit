@@ -1,5 +1,5 @@
 from __future__ import annotations
-from . import _register, BTN_SUPPORT, BTN_ABOUT, BTN_CHANGE_COUNTRY, BTN_MY_APPS, BTN_APPLY, BTN_BACK
+from locales.core import _register, BTN_SUPPORT, BTN_ABOUT, BTN_CHANGE_COUNTRY, BTN_MY_APPS, BTN_APPLY, BTN_BACK
 
 L10N_DE = {
     "prompt_choose_region": "🌍 Wählen Sie die Region für Ihren Antrag:",
@@ -80,3 +80,5 @@ L10N_DE.update({
     BTN_BACK: L10N_DE["btn_back"],
 })
 _register("de", L10N_DE)
+
+__all__ = ["L10N_DE"]
