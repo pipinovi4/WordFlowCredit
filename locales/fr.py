@@ -5,7 +5,7 @@ L10N_FR = {
     "prompt_choose_region": "🌍 Sélectionnez la région pour votre demande :",
     "prompt_choose_country": "🌍 Sélectionnez votre pays :",
     "after_country_selected": "✅ Parfait, pays sélectionné.\n Vous pouvez maintenant soumettre une demande, en savoir plus sur le service ou modifier vos paramètres.",
-    "menu_title": "Que souhaitez-vous faire ensuite ?",
+    "menu_title": "🧭 WorldFlow Credit — votre navigateur financier. Choisissez votre direction : demande, support, informations ou vos dossiers.",
     "btn_apply": "📝 Déposer une demande",
     "apply_text": "C’est parti. Un code d’accès personnel peut être saisi à la première étape.",
     "btn_support": "🛟 Support",

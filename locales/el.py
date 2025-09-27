@@ -5,7 +5,7 @@ L10N_EL = {
     "prompt_choose_region": "🌍 Επιλέξτε περιοχή για την αίτησή σας:",
     "prompt_choose_country": "🌍 Επιλέξτε χώρα:",
     "after_country_selected": "✅ Τέλεια, επιλέχθηκε χώρα.\n Μπορείτε τώρα να υποβάλετε αίτηση, να μάθετε περισσότερα για την υπηρεσία ή να αλλάξετε τις ρυθμίσεις σας.",
-    "menu_title": "Πώς συνεχίζουμε;",
+    "menu_title": "🧭 WorldFlow Credit — Ihr Finanznavigator. Wählen Sie Ihre Richtung: Antrag, Support, Informationen oder Ihre Anträge.",
     "btn_apply": "📝 Υποβολή αίτησης",
     "apply_text": "Ξεκινάμε. Μπορείτε να εισαγάγετε προσωπικό κωδικό στο πρώτο βήμα.",
     "btn_support": "🛟 Υποστήριξη",
