@@ -4,7 +4,7 @@ from locales.core import _register, BTN_SUPPORT, BTN_ABOUT, BTN_CHANGE_COUNTRY, 
 L10N_FR = {
     "prompt_choose_region": "🌍 Sélectionnez la région pour votre demande :",
     "prompt_choose_country": "🌍 Sélectionnez votre pays :",
-    "after_country_selected": "✅ Pays sélectionné : {country}\nLa langue a été réglée automatiquement.",
+    "after_country_selected": "✅ Parfait, pays sélectionné.\n Vous pouvez maintenant soumettre une demande, en savoir plus sur le service ou modifier vos paramètres.",
     "menu_title": "Que souhaitez-vous faire ensuite ?",
     "btn_apply": "📝 Déposer une demande",
     "apply_text": "C’est parti. Un code d’accès personnel peut être saisi à la première étape.",
@@ -37,13 +37,17 @@ L10N_FR = {
     },
 
     "about_full": (
-        "<b>WorldFlow Credit — À propos</b><br/><br/>"
-        "Plateforme internationale de demande de crédit : KYC standardisé, contrôles de risque automatisés "
-        "et acheminement sécurisé vers des prêteurs agréés.<br/><br/>"
-        "• Conditions transparentes, sans frais cachés<br/>"
-        "• Données chiffrées en transit et au repos<br/>"
-        "• Instruction rapide via des partenaires vérifiés<br/>"
-        "• Support en anglais et langues locales"
+        "<b>🌍 WorldFlow Credit — une plateforme fintech mondiale dédiée au crédit.</b><br/><br/>"
+        "Nous connectons les clients directement aux banques, grâce à des solutions digitales et à l’expertise d’un réseau "
+        "international de courtiers, analystes et conseillers financiers. Avec nous, le processus devient simple, transparent "
+        "et rapide.<br/><br/>"
+        "💼 Notre écosystème rassemble des milliers de spécialistes et de partenaires dans le monde entier, travaillant au sein "
+        "de l’espace numérique WorldFlow. Nous associons technologie bancaire et conseil financier pour garantir un traitement "
+        "fluide des demandes.<br/><br/>"
+        "<b>✅ Nous proposons :</b><br/>"
+        "— 💳 crédits à la consommation, hypothécaires et automobiles en ligne ;<br/>"
+        "— 💼 accompagnement digital des entreprises (auto-entrepreneurs / sociétés), croissance du chiffre d’affaires et conformité ;<br/>"
+        "— 📊 outils de préparation au scoring de crédit pour maximiser vos chances d’approbation ;"
     ),
 
     "steps_by_country": {

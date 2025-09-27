@@ -3,7 +3,7 @@ from locales.core import _register, BTN_SUPPORT, BTN_ABOUT, BTN_CHANGE_COUNTRY, 
 
 L10N_EN = {
     "prompt_choose_region": "🌍 Select the region for your application:",
-    "after_country_selected": "✅ Country selected: {country}\nLanguage has been set automatically.",
+    "after_country_selected": "✅ Great, country selected.\n You can now submit an application, learn more about the service, or adjust your settings.",
     "menu_title": "What would you like to do next?",
     "btn_apply": "📝 Submit application",
     "apply_text": "Let's begin. A personal access code can be entered on the first step.",

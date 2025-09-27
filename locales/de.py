@@ -4,7 +4,7 @@ from locales.core import _register, BTN_SUPPORT, BTN_ABOUT, BTN_CHANGE_COUNTRY, 
 L10N_DE = {
     "prompt_choose_region": "🌍 Wählen Sie die Region für Ihren Antrag:",
     "prompt_choose_country": "🌍 Wählen Sie Ihr Land:",
-    "after_country_selected": "✅ Land ausgewählt: {country}\nDie Sprache wurde automatisch eingestellt.",
+    "after_country_selected": "✅ Perfekt, Land ausgewählt.\n Sie können nun einen Antrag stellen, mehr über den Service erfahren oder Ihre Einstellungen ändern.",
     "menu_title": "Wie möchten Sie fortfahren?",
     "btn_apply": "📝 Antrag stellen",
     "apply_text": "Legen wir los. Einen persönlichen Code können Sie im ersten Schritt eingeben.",
@@ -37,13 +37,19 @@ L10N_DE = {
     },
 
     "about_full": (
-        "<b>WorldFlow Credit — Über uns</b><br/><br/>"
-        "Grenzüberschreitende Antragsplattform: standardisiertes KYC, automatisierte Risiko-Checks "
-        "und sichere Weiterleitung an lizenzierte Kreditgeber.<br/><br/>"
-        "• Transparente Konditionen, keine versteckten Gebühren<br/>"
-        "• Verschlüsselung bei Übertragung & Speicherung<br/>"
-        "• Schnelle Prüfung über verifizierte Partner<br/>"
-        "• Support auf Englisch und in Landessprachen"
+        "<b>🌍 WorldFlow Credit — eine globale Fintech-Plattform für Kreditlösungen.</b><br/><br/>"
+        "Wir verbinden Kunden direkt mit Banken — durch digitale Lösungen und die Expertise internationaler Broker, "
+        "Analysten und Berater. Mit uns wird der Prozess einfach, transparent und schnell.<br/><br/>"
+        "💼 Unser Ökosystem umfasst Tausende von Spezialisten und Partnern weltweit, die im digitalen Raum von WorldFlow "
+        "zusammenarbeiten. Wir kombinieren Bankentechnologien mit Finanzberatung, damit Ihre Anträge ohne Hindernisse "
+        "bearbeitet werden.<br/><br/>"
+        "<b>✅ Wir bieten:</b><br/>"
+        "— 💳 Online-Kredite für Konsum, Immobilien und Fahrzeuge;<br/>"
+        "— 💼 digitale Unterstützung für Unternehmen (Einzelunternehmer / GmbH), Umsatzwachstum und Geschäftsbegleitung;<br/>"
+        "— 📊 Algorithmen zur Vorbereitung auf Bonitätsscoring zur Steigerung der Genehmigungschancen;<br/>"
+        "— 🤝 persönliche Begleitung in jeder Phase — von der Antragstellung bis zur Auszahlung.<br/><br/>"
+        "⚡️ Mit WorldFlow Credit erhalten Sie nicht nur Zugang zu Finanzprodukten, sondern ein vollständiges digitales "
+        "Banking-Tool, das Ihre Ziele unterstützt."
     ),
 
     "steps_by_country": {
