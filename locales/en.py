@@ -59,13 +59,18 @@ L10N_EN = {
     },
 
     "about_full": (
-        "<b>WorldFlow Credit — About Us</b><br/><br/>"
-        "We are a cross-border credit application platform that standardizes KYC, automates risk checks, "
-        "and securely routes applications to licensed lenders.<br/><br/>"
-        "• Transparent terms, no hidden fees<br/>"
-        "• Data encrypted in transit & at rest<br/>"
-        "• Fast underwriting via verified partners<br/>"
-        "• Support in English & local languages"
+        "<b>🌍 WorldFlow Credit — a global fintech platform for lending.</b>\n\n"
+        "We connect clients directly with banks, using digital solutions and the expertise of international brokers, analysts, "
+        "and consultants. With us, the process becomes simple, transparent, and fast.\n\n"
+        "💼 Our ecosystem brings together thousands of specialists and partners worldwide, working in the unified digital space "
+        "of WorldFlow. We merge banking technology with financial consulting to ensure your applications are processed without barriers.\n\n"
+        "<b>✅ We provide:</b>\n"
+        "— 💳 online consumer, mortgage, and auto loans;\n"
+        "— 💼 digital support for businesses (sole proprietors/companies), turnover growth, and deal support;\n"
+        "— 📊 algorithms to prepare for credit scoring and boost approval chances;\n"
+        "— 🤝 personal support at every stage — from application to disbursement.\n\n"
+        "⚡️ <b>With WorldFlow Credit, you gain not just access to financial products, but a full digital banking tool, "
+        "where every solution scales to your goals.</b>"
     ),
 
     "steps_by_country": {

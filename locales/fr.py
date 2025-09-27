@@ -37,17 +37,18 @@ L10N_FR = {
     },
 
     "about_full": (
-        "<b>🌍 WorldFlow Credit — une plateforme fintech mondiale dédiée au crédit.</b><br/><br/>"
-        "Nous connectons les clients directement aux banques, grâce à des solutions digitales et à l’expertise d’un réseau "
-        "international de courtiers, analystes et conseillers financiers. Avec nous, le processus devient simple, transparent "
-        "et rapide.<br/><br/>"
-        "💼 Notre écosystème rassemble des milliers de spécialistes et de partenaires dans le monde entier, travaillant au sein "
-        "de l’espace numérique WorldFlow. Nous associons technologie bancaire et conseil financier pour garantir un traitement "
-        "fluide des demandes.<br/><br/>"
-        "<b>✅ Nous proposons :</b><br/>"
-        "— 💳 crédits à la consommation, hypothécaires et automobiles en ligne ;<br/>"
-        "— 💼 accompagnement digital des entreprises (auto-entrepreneurs / sociétés), croissance du chiffre d’affaires et conformité ;<br/>"
-        "— 📊 outils de préparation au scoring de crédit pour maximiser vos chances d’approbation ;"
+        "<b>🌍 WorldFlow Credit — une plateforme fintech mondiale dédiée au crédit.</b>\n\n"
+        "Nous connectons les clients directement aux banques, grâce à des solutions digitales et à l’expertise d’un réseau international "
+        "de courtiers, analystes et conseillers financiers. Avec nous, le processus devient simple, transparent et rapide.\n\n"
+        "💼 Notre écosystème rassemble des milliers de spécialistes et de partenaires dans le monde entier, travaillant au sein de l’espace numérique WorldFlow. "
+        "Nous associons technologie bancaire et conseil financier pour garantir un traitement fluide des demandes.\n\n"
+        "<b>✅ Nous proposons :</b>\n"
+        "— 💳 crédits à la consommation, hypothécaires et automobiles en ligne ;\n"
+        "— 💼 accompagnement digital des entreprises (auto-entrepreneurs / sociétés), croissance du chiffre d’affaires et conformité ;\n"
+        "— 📊 outils de préparation au scoring de crédit pour maximiser vos chances d’approbation ;\n"
+        "— 🤝 suivi personnalisé à chaque étape — de la demande au financement.\n\n"
+        "⚡️ <b>Avec WorldFlow Credit, vous accédez non seulement à des produits financiers, "
+        "mais à un véritable outil de banque digitale, adapté à vos objectifs.</b>"
     ),
 
     "steps_by_country": {

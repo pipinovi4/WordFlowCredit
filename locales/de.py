@@ -37,19 +37,18 @@ L10N_DE = {
     },
 
     "about_full": (
-        "<b>🌍 WorldFlow Credit — eine globale Fintech-Plattform für Kreditlösungen.</b><br/><br/>"
-        "Wir verbinden Kunden direkt mit Banken — durch digitale Lösungen und die Expertise internationaler Broker, "
-        "Analysten und Berater. Mit uns wird der Prozess einfach, transparent und schnell.<br/><br/>"
-        "💼 Unser Ökosystem umfasst Tausende von Spezialisten und Partnern weltweit, die im digitalen Raum von WorldFlow "
-        "zusammenarbeiten. Wir kombinieren Bankentechnologien mit Finanzberatung, damit Ihre Anträge ohne Hindernisse "
-        "bearbeitet werden.<br/><br/>"
-        "<b>✅ Wir bieten:</b><br/>"
-        "— 💳 Online-Kredite für Konsum, Immobilien und Fahrzeuge;<br/>"
-        "— 💼 digitale Unterstützung für Unternehmen (Einzelunternehmer / GmbH), Umsatzwachstum und Geschäftsbegleitung;<br/>"
-        "— 📊 Algorithmen zur Vorbereitung auf Bonitätsscoring zur Steigerung der Genehmigungschancen;<br/>"
-        "— 🤝 persönliche Begleitung in jeder Phase — von der Antragstellung bis zur Auszahlung.<br/><br/>"
-        "⚡️ Mit WorldFlow Credit erhalten Sie nicht nur Zugang zu Finanzprodukten, sondern ein vollständiges digitales "
-        "Banking-Tool, das Ihre Ziele unterstützt."
+        "<b>🌍 WorldFlow Credit — eine globale Fintech-Plattform für Kreditlösungen.</b>\n\n"
+        "Wir verbinden Kunden direkt mit Banken, durch digitale Lösungen und die Expertise internationaler Broker, Analysten und Berater. "
+        "Mit uns wird der Prozess einfach, transparent und schnell.\n\n"
+        "💼 Unser Ökosystem umfasst Tausende von Spezialisten und Partnern weltweit, die im digitalen Raum von WorldFlow zusammenarbeiten. "
+        "Wir kombinieren Bankentechnologien mit Finanzberatung, damit Ihre Anträge ohne Hindernisse bearbeitet werden.\n\n"
+        "<b>✅ Wir bieten:</b>\n"
+        "— 💳 Online-Kredite für Konsum, Immobilien und Fahrzeuge;\n"
+        "— 💼 digitale Unterstützung für Unternehmen (Einzelunternehmer / GmbH), Umsatzwachstum und Geschäftsbegleitung;\n"
+        "— 📊 Algorithmen zur Vorbereitung auf Bonitätsscoring zur Steigerung der Genehmigungschancen;\n"
+        "— 🤝 persönliche Begleitung in jeder Phase — von der Antragstellung bis zur Auszahlung.\n\n"
+        "⚡️ <b>Mit WorldFlow Credit erhalten Sie nicht nur Zugang zu Finanzprodukten, "
+        "sondern ein vollständiges digitales Banking-Tool, das Ihre Ziele unterstützt.</b>"
     ),
 
     "steps_by_country": {
