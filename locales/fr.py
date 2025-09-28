@@ -12,10 +12,25 @@ L10N_FR = {
     "btn_about": "ℹ️ À propos",
     "btn_change_country": "🌐 Changer de pays",
     "btn_my_apps": "🗂 Mes demandes",
-    "support_text": "Écrivez-nous : @{support_username}",
+    "my_applications_text": (
+        "<b>🗂 Mes demandes</b>\n\n"
+        "Vos demandes actives apparaîtront ici : statut, documents, commentaires et chat avec un conseiller.\n"
+    ),
+    "support_text": (
+        "<b>💬 Assistance WorldFlow Credit</b>\n\n"
+        "Nous sommes là pour accélérer vos décisions :\n"
+        "— résoudre les situations complexes,\n"
+        "— indiquer les meilleures étapes,\n"
+        "— vous mettre en relation avec le bon spécialiste.\n\n"
+        "📲 Votre canal d’assistance personnel : <b>@WorldFlowSupport</b>"
+    ),
     "about_text": "WorldFlow Credit — service international de demande de crédit.",
     "my_apps_stub": "Vos demandes apparaîtront ici (bientôt).",
-    "back_to_region": "↩️ Retour à la sélection de région.",
+    "back_to_region": (
+        "<b>↩️ Changer de région et continuer 🌐</b>\n\n"
+        "💡 Indiquez le pays où vous vous trouvez actuellement — "
+        "ainsi nous vous proposerons les produits et formulaires les plus pertinents."
+    ),
     "btn_back": "↩ Retour",
     "btn_website": "Site web",
     "btn_tg_channel": "Chaîne Telegram",

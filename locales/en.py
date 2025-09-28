@@ -11,10 +11,25 @@ L10N_EN = {
     "btn_about": "ℹ️ About us",
     "btn_change_country": "🌐 Change country",
     "btn_my_apps": "🗂 My applications",
-    "support_text": "Message us: @{support_username}",
+    "my_applications_text": (
+        "<b>🗂 My applications</b>\n\n"
+        "Here you will find your active applications: status, documents, comments, and chat with an expert.\n"
+    ),
+    "support_text": (
+        "<b>💬 WorldFlow Credit Support</b>\n\n"
+        "We’re here to make decisions faster:\n"
+        "— resolve complex situations,\n"
+        "— suggest optimal next steps,\n"
+        "— connect you with the right specialist.\n\n"
+        "📲 Your personal support channel: <b>@WorldFlowSupport"
+    ),
     "about_text": "WorldFlow Credit — international credit application service.",
     "my_apps_stub": "Your applications will appear here (soon).",
-    "back_to_region": "↩️ Back to region selection.",
+    "back_to_region": (
+        "<b>↩️ Change region and continue 🌐</b>\n\n"
+        "💡 Select the country you are currently in — "
+        "this way we’ll show you the most relevant products and forms."
+    ),
     "btn_back": "↩ Back",
     "btn_website": "Website",
     "btn_tg_channel": "Telegram channel",
