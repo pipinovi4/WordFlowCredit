@@ -14,6 +14,7 @@ from telegram.ext import (
     Application, CommandHandler, ContextTypes,
     CallbackQueryHandler, MessageHandler, filters,
 )
+from aiogram.enums import ParseMode
 
 # Load .env once at startup
 load_dotenv()
@@ -108,9 +109,9 @@ def kb_about(lang: str) -> InlineKeyboardMarkup:
     YT       = os.getenv("SOCIAL_YT",       "https://youtube.com/@worldflowcredit")
 
     rows = [
-        [InlineKeyboardButton(translate(lang, "btn_website"), url=WEBSITE), InlineKeyboardButton(t(lang, "btn_tg_channel"), url=TG_CH)],
-        [InlineKeyboardButton(translate(lang, "btn_instagram"), url=INSTA), InlineKeyboardButton(t(lang, "btn_x"), url=X_TW)],
-        [InlineKeyboardButton(translate(lang, "btn_linkedin"), url=LINKEDIN), InlineKeyboardButton(t(lang, "btn_youtube"), url=YT)],
+        [InlineKeyboardButton(translate(lang, "btn_website"), url=WEBSITE), InlineKeyboardButton(translate(lang, "btn_tg_channel"), url=TG_CH)],
+        [InlineKeyboardButton(translate(lang, "btn_instagram"), url=INSTA), InlineKeyboardButton(translate(lang, "btn_x"), url=X_TW)],
+        [InlineKeyboardButton(translate(lang, "btn_linkedin"), url=LINKEDIN), InlineKeyboardButton(translate(lang, "btn_youtube"), url=YT)],
         [InlineKeyboardButton(translate(lang, "btn_back"), callback_data=cb_menu(BTN_BACK))],
     ]
     return InlineKeyboardMarkup(rows)
@@ -140,6 +141,8 @@ PROGRESS_MSG_ID   = "progress_msg_id"     # last (for edit)
 PROGRESS_MSG_IDS  = "progress_msg_ids"    # ALL created (for cleanup)
 LAST_PROMPT_MSG_ID  = "last_prompt_msg_id"
 LAST_SERVICE_MSG_ID = "last_service_msg_id"
+ABOUT_PHOTO_MSG_ID = "about_photo_msg_id"
+ABOUT_TEXT_MSG_ID  = "about_text_msg_id"
 
 def _html_escape(s: str) -> str:
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -149,7 +152,7 @@ def _short(val: str, limit: int = 64) -> str:
     return s if len(s) <= limit else s[:limit - 1] + "…"
 
 def _label(lang: str, key: str) -> str:
-    return t(lang, f"labels.{key}") or key
+    return translate(lang, f"labels.{key}") or key
 
 def build_step_order(country_code: str) -> list[str]:
     steps = BASE_STEP_ORDER.copy()
@@ -165,11 +168,11 @@ ACCESS_CODE_PROMPTS = {
 
 def get_prompt(lang: str, country: str, step_key: str) -> str:
     country_key = f"steps_by_country.{country}.{step_key}"
-    s = t(lang, country_key)
+    s = translate(lang, country_key)
     if s != country_key:
         return s
     base_key = f"steps.{step_key}"
-    s = t(lang, base_key)
+    s = translate(lang, base_key)
     if s != base_key:
         return s
     if step_key == "access_code": return ACCESS_CODE_PROMPTS.get(lang, ACCESS_CODE_PROMPTS["en"])
@@ -177,9 +180,9 @@ def get_prompt(lang: str, country: str, step_key: str) -> str:
     return f"[{step_key}]"
 
 def progress_panel_html(lang: str, steps: list[str], answers: dict) -> str:
-    title  = t(lang, "ui.preview_title")
-    done_h = t(lang, "ui.done")
-    todo_h = t(lang, "ui.todo")
+    title  = translate(lang, "ui.preview_title")
+    done_h = translate(lang, "ui.done")
+    todo_h = translate(lang, "ui.todo")
 
     done_lines, todo_lines = [], []
     for key in steps:
@@ -279,8 +282,8 @@ async def send_step_prompt(qmsg_or_upd, lang: str, country: str, step_key: str):
     reply_markup = None
 
     if step_key == "phone":
-        share = t(lang, "ui.share_phone")
-        manual = t(lang, "ui.type_manually")
+        share = translate(lang, "ui.share_phone")
+        manual = translate(lang, "ui.type_manually")
         reply_markup = ReplyKeyboardMarkup(
             [[KeyboardButton(share, request_contact=True)],
              [KeyboardButton(manual)]],
@@ -289,7 +292,7 @@ async def send_step_prompt(qmsg_or_upd, lang: str, country: str, step_key: str):
         )
     elif step_key == "marital_status":
         options = []
-        base = t(lang, "steps.marital_status")
+        base = translate(lang, "steps.marital_status")
         for line in (base or "").splitlines():
             opt = line.strip(" ••\t")
             if opt and "•" not in opt and ":" not in opt and "💬" not in opt and len(opt) <= 32:
@@ -329,86 +332,190 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         # could be triggered by callback from a media message, so use safe_edit
         await safe_edit(update.callback_query, COMMON_TEXT.WELCOME_BILINGUAL, reply_markup=kb_start(), parse_mode="Markdown")
 
+async def _cleanup_about(chat, context: ContextTypes.DEFAULT_TYPE):
+    photo_id = context.user_data.pop(ABOUT_PHOTO_MSG_ID, None)
+    text_id  = context.user_data.pop(ABOUT_TEXT_MSG_ID, None)
+    for mid in (photo_id, text_id):
+        if mid:
+            try:
+                await chat.delete_message(mid)
+            except Exception:
+                pass
+
 async def on_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Central callback router.
+    - Безпечна навігація між екранами.
+    - Коректне прибирання About (фото + довгий текст).
+    - Уникаємо ліміту 1024 для caption (фото без caption, текст окремо).
+    - Максимально терпимі до стану повідомлення (edit/delete з fallback).
+    """
     q = update.callback_query
-    await q.answer()
+    if not q:
+        log.warning("on_callback: missing callback_query")
+        return
+
+    try:
+        await q.answer()
+    except Exception as e:
+        log.debug("on_callback: answer() failed: %s", e)
+
     data = q.data or ""
+    chat = q.message.chat if q.message else None
+    if not chat:
+        log.warning("on_callback: missing chat/message for data=%r", data)
+        return
+
     lang = context.user_data.get("lang") or "en"
 
-    if data == CB_START:
-        # starting over → cleanup panels too
-        await _wipe_all_progress_panels(q.message.chat, context)
+    # ---------- helpers ----------
+    async def goto_regions():
+        await _cleanup_about(chat, context)
+        await _wipe_all_progress_panels(chat, context)
         await safe_edit(q, COMMON_TEXT.WELCOME_BILINGUAL, reply_markup=kb_regions(), parse_mode="Markdown")
-        return
 
-    if data.startswith(CB_REGION):
-        region_code = data.split(":", 1)[1]
-        await safe_edit(q, COMMON_TEXT.WELCOME_BILINGUAL, reply_markup=kb_countries(region_code), parse_mode="Markdown")
-        return
+    async def goto_countries(region_code: str):
+        await _cleanup_about(chat, context)
+        await safe_edit(q, COMMON_TEXT.WELCOME_BILINGUAL,
+                        reply_markup=kb_countries(region_code),
+                        parse_mode="Markdown")
 
-    if data.startswith(CB_COUNTRY):
-        country_code = data.split(":", 1)[1]
-        context.user_data["country"] = country_code
-        lang = LANG_BY_COUNTRY.get(country_code, "en")
-        context.user_data["lang"] = lang
+    async def goto_menu(message_text: str | None = None):
+        await _cleanup_about(chat, context)
+        await safe_edit(q, message_text or translate(lang, "menu_title"),
+                        reply_markup=kb_main_menu(lang))
 
-        text = t(lang, "after_country_selected", country=COUNTRY_TITLE.get(country_code, country_code))
-        text += "\n\n" + t(lang, "menu_title")
-        await safe_edit(q, text, reply_markup=kb_main_menu(lang))
-        return
+    async def open_about():
+        """Показуємо картинку About (без caption) + довгий HTML-текст окремим повідомленням."""
+        await _cleanup_about(chat, context)
+        file_id = os.getenv("ABOUT_FILE_ID",
+                            "AgACAgIAAxkBAAMlaMaGKun818899Ofq-VykTYr2ZgsAAmDzMRtEzDlKa-c7JNW7ODkBAAMCAAN5AAM2BA")
+        try:
+            # перетворюємо поточне повідомлення на фото
+            await q.edit_message_media(InputMediaPhoto(media=file_id))
+            context.user_data[ABOUT_PHOTO_MSG_ID] = q.message.message_id
+        except Exception as e:
+            log.warning("About: edit_message_media failed: %s", e)
+            # якщо не вийшло — видаляємо старе повідомлення і шлемо фото наново
+            try:
+                await q.message.delete()
+            except Exception:
+                pass
+            try:
+                sent_photo = await chat.send_photo(photo=file_id)
+                context.user_data[ABOUT_PHOTO_MSG_ID] = sent_photo.message_id
+            except Exception as e2:
+                log.error("About: send_photo failed: %s", e2)
 
-    if data.startswith(CB_MENU):
-        action = data.split(":", 1)[1]
-        if action == BTN_APPLY:
-            country = context.user_data.get("country") or "US"
-            lang = context.user_data.get("lang") or "en"
-            steps = build_step_order(country)
-            context.user_data[APP_FLOW] = True
-            context.user_data[APP_STEPS] = steps
-            context.user_data[APP_IDX] = 0
-            context.user_data[APP_ANS] = {}
+        # довгий текст окремо
+        try:
+            sent_text = await chat.send_message(
+                translate(lang, "about_full"),
+                parse_mode="HTML",
+                reply_markup=kb_about(lang),
+            )
+            context.user_data[ABOUT_TEXT_MSG_ID] = sent_text.message_id
+        except Exception as e:
+            log.error("About: send_message text failed: %s", e)
 
-            await safe_edit(q, t(lang, "apply_text"))
-            await upsert_progress_panel(q.message, context)
-
-            sent_prompt = await send_step_prompt(q.message, lang, country, steps[0])
-            if sent_prompt and hasattr(sent_prompt, "message_id"):
-                context.user_data[LAST_PROMPT_MSG_ID] = sent_prompt.message_id
+    # ---------- routing ----------
+    try:
+        if data == CB_START:
+            await goto_regions()
             return
 
-        if action == BTN_SUPPORT:
-            support_username = os.getenv("SUPPORT_USERNAME", "WorldFlowSupport")
-            txt = t(lang, "support_text", support_username=support_username) + "\n\n" + t(lang, "menu_title")
-            await safe_edit(q, txt, reply_markup=kb_main_menu(lang))
+        if data.startswith(CB_REGION):
+            region_code = data.split(":", 1)[1]
+            if region_code not in COMMON_TEXT.COUNTRIES_BY_REGION:
+                log.warning("Unknown region_code: %s", region_code)
+                await goto_regions()
+                return
+            await goto_countries(region_code)
             return
 
-        if action == BTN_ABOUT:
-            file_id = os.getenv("ABOUT_FILE_ID", "AgACAgIAAxkBAAMlaMaGKun818899Ofq-VykTYr2ZgsAAmDzMRtEzDlKa-c7JNW7ODkBAAMCAAN5AAM2BA")
-            if file_id:
-                try:
-                    await q.edit_message_media(
-                        media=InputMediaPhoto(media=file_id, caption=translate(lang, "about_full"), parse_mode="HTML"),
-                        reply_markup=kb_about(lang),
-                    )
-                    return
-                except Exception as e:
-                    log.warning("edit_message_media failed: %s", e)
+        if data.startswith(CB_COUNTRY):
+            await _cleanup_about(chat, context)
+            country_code = data.split(":", 1)[1]
+            context.user_data["country"] = country_code
+            lang = LANG_BY_COUNTRY.get(country_code, "en")
+            context.user_data["lang"] = lang
 
-            # Fallback to text (use safe_edit in case previous is media)
-            await safe_edit(q, translate(lang, "about_full"), reply_markup=kb_about(lang), parse_mode="Markdown")
+            text = translate(lang, "after_country_selected",
+                             country=COUNTRY_TITLE.get(country_code, country_code))
+            text += "\n\n" + translate(lang, "menu_title")
+            await safe_edit(q, text, reply_markup=kb_main_menu(lang))
             return
 
-        if action == BTN_CHANGE_COUNTRY:
-            await safe_edit(q, translate(lang, "back_to_region"), reply_markup=kb_regions())
+        if data.startswith(CB_MENU):
+            action = data.split(":", 1)[1]
+
+            if action == BTN_APPLY:
+                await _cleanup_about(chat, context)
+                country = context.user_data.get("country") or "US"
+                lang = context.user_data.get("lang") or "en"
+
+                steps = build_step_order(country)
+                context.user_data[APP_FLOW] = True
+                context.user_data[APP_STEPS] = steps
+                context.user_data[APP_IDX] = 0
+                context.user_data[APP_ANS] = {}
+
+                await safe_edit(q, translate(lang, "apply_text"))
+                await upsert_progress_panel(q.message, context)
+
+                sent_prompt = await send_step_prompt(q.message, lang, country, steps[0])
+                if sent_prompt and hasattr(sent_prompt, "message_id"):
+                    context.user_data[LAST_PROMPT_MSG_ID] = sent_prompt.message_id
+                return
+
+            if action == BTN_SUPPORT:
+                await _cleanup_about(chat, context)
+                support_username = os.getenv("SUPPORT_USERNAME", "WorldFlowSupport")
+
+                txt = translate(lang, "support_text", support_username=support_username)
+
+                await safe_edit(q, txt, reply_markup=kb_main_menu(lang), parse_mode="HTML")
+                return
+
+            if action == BTN_ABOUT:
+                await open_about()
+                return
+
+            if action == BTN_CHANGE_COUNTRY:
+                await _cleanup_about(chat, context)
+                await safe_edit(q, translate(lang, "back_to_region"), reply_markup=kb_regions())
+                return
+
+            if action == BTN_MY_APPS:
+                await _cleanup_about(chat, context)
+                await safe_edit(
+                    q,
+                    translate(lang, "my_applications_text"),
+                    reply_markup=kb_main_menu(lang),
+                    parse_mode="HTML",
+                )
+                return
+
+            if action == BTN_BACK:
+                await _cleanup_about(chat, context)
+                await replace_with_text(q, translate(lang, "menu_title"), reply_markup=kb_main_menu(lang))
+                return
+
+            # unknown action
+            log.warning("Unknown menu action: %s", action)
+            await goto_menu()
             return
 
-        if action == BTN_MY_APPS:
-            await safe_edit(q, translate(lang, "my_apps_stub") + "\n\n" + t(lang, "menu_title"), reply_markup=kb_main_menu(lang))
-            return
-
-        if action == BTN_BACK:
-            await replace_with_text(q, translate(lang, "menu_title"), reply_markup=kb_main_menu(lang))
-            return
+        # unknown callback data
+        log.warning("Unknown callback data: %s", data)
+        await goto_menu()
+    except Exception as e:
+        log.exception("on_callback fatal: %s", e)
+        # soft fallback, щоб не ламати UX
+        try:
+            await chat.send_message("⚠️ Something went wrong. Please try again.")
+        except Exception:
+            pass
 
 async def handle_application_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.user_data.get(APP_FLOW):
@@ -438,7 +545,7 @@ async def handle_application_message(update: Update, context: ContextTypes.DEFAU
 
     if value is None:
         text = (msg.text or "").strip()
-        manual = t(lang, "ui.type_manually")
+        manual = translate(lang, "ui.type_manually")
         # If user chose manual entry, re-send prompt without keyboard
         if step_key == "phone" and (text == manual or "Ввести вручную" in text or "Manuell" in text or "Entrer" in text):
             prompt = await msg.reply_text(get_prompt(lang, country, step_key), reply_markup=ReplyKeyboardRemove())
